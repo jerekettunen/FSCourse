@@ -1,6 +1,30 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
+import './index.css'
+
+const Notification = ({ message, state }) => {
+  if (message === null) {
+    return null
+  }
+  console.log(state)
+  if (state) {
+    const messageStyle = { color: 'red', background: 'lightgrey', fontSize: 20, borderStyle: 'solid', borderRadius: 5, padding: 10, marginBottom: 10 }
+    return (
+      <div style={messageStyle} className="error">
+        {message}
+      </div>
+    )
+  }
+  else {
+    const messageStyle = { color: 'green', background: 'lightgrey', fontSize: 20, borderStyle: 'solid', borderRadius: 5, padding: 10, marginBottom: 10 }
+    return (
+      <div style={messageStyle} className="success">
+        {message}
+      </div>
+    )
+  }
+}
 
 const Filter = ({ filter, handleFilterChange }) => {
 
@@ -57,6 +81,9 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
 
+  const baseMessage = {text : null, state : false}
+  const [updateMessage, setUpdateMessage] = useState(baseMessage)
+
   // Fetch data from server
   useEffect( () => {
     personService
@@ -104,15 +131,29 @@ const App = () => {
         .update(person.id, { ...person, number: newNumber })
         .then((returnedPerson) => {
           setPersons(persons.map(p => (p.id !== person.id ? p : returnedPerson)))
+          
           setNewName('')
           setNewNumber('')
+
+          const newMessage = {
+            text: `Updated ${returnedPerson.name}'s number`,
+            state: false
+          }
+          setUpdateMessage(newMessage)
+          setTimeout(() => {
+            setUpdateMessage(baseMessage)
+          }, 5000)
+
         })
         .catch(error => {
-          setErrorMessage('Error updating person:', error)
+          const errorMessage = {
+            text: `Information of ${person.name} has already been removed from server`,
+            state: true
+          }
+          setUpdateMessage(errorMessage)
           setTimeout(() => {
-            setErrorMessage(null)
+            setUpdateMessage(baseMessage)
           }, 5000)
-          setPersons(persons.filter(p => p.id !== person.id))
         })
       } else {
       }
@@ -125,6 +166,15 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
+
+        const newMessage = {
+          text: `Added ${returnedPerson.name}`,
+          state: false
+        }
+        setUpdateMessage(newMessage)
+        setTimeout(() => {
+          setUpdateMessage(baseMessage)
+        }, 5000)
       })
       .catch(error => {
         console.error('Error adding person:', error)
@@ -138,6 +188,9 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={updateMessage.text} state={updateMessage.state} />
+      <h3>Search</h3>
+      <p>Search for a name</p>
       <Filter filter = {filter} handleFilterChange={handleFilterChange}/>
       <h3>Add a new</h3>
       <Form addName={addName}
