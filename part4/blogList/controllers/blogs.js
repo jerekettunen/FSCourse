@@ -1,6 +1,7 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
+
+
 
 
 blogsRouter.get('/', async(request, response) => {
@@ -10,9 +11,10 @@ blogsRouter.get('/', async(request, response) => {
 })
 
 blogsRouter.post('/', async(request, response) => {
+  const user = request.user
+
   const blog = new Blog(request.body)
-  const users = await User.find({})
-  const user = users[0]
+  blog.user = user.id
 
   if (!blog.title || !blog.url) {
     return response.status(400).json({ error: 'title or url missing' })
@@ -22,7 +24,6 @@ blogsRouter.post('/', async(request, response) => {
     blog.likes = 0
   }
 
-  blog.user = user.id
   const savedBlog = await blog.save()
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
@@ -44,7 +45,14 @@ blogsRouter.put('/:id', async(request, response) => {
 
 
 blogsRouter.delete('/:id', async(request, response) => {
+  const user = request.user
+  const blog = await Blog.findById(request.params.id)
+  if (blog.user.toString() !== user.id.toString()) {
+    return response.status(401).json({ error: 'only the creator can delete this blog' })
+  }
   await Blog.findByIdAndDelete(request.params.id)
+  user.blogs = user.blogs.filter(b => b.toString() !== request.params.id)
+  await user.save()
   response.status(204).end()
 })
 

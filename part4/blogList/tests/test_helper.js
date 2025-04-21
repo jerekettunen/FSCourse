@@ -8,7 +8,7 @@ const initialBlogs = [
     author: 'Michael Chan',
     url: 'https://reactpatterns.com/',
     likes: 7,
-    __v: 0
+    __v: 0,
   },
   {
     title: 'Go To Statement Considered Harmful',
@@ -51,6 +51,11 @@ const initialBlogs = [
   }
 ]
 
+const initialUser = {
+  username: 'DiddyKong',
+  password: 'salainen'
+}
+
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
   return blogs.map(blog => blog.toJSON())
@@ -62,8 +67,10 @@ const usersInDb = async () => {
 }
 
 
+
 module.exports = {
   initialBlogs,
+  initialUser,
   blogsInDb,
-  usersInDb
+  usersInDb,
 }
