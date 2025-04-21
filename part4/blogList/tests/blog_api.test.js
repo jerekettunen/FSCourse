@@ -16,11 +16,15 @@ describe('when there is initially some blogs saved', () => {
 
   beforeEach(async () => {
     await User.deleteMany({})
-    await api
-      .post('/api/users')
-      .send(helper.initialUser)
-      .expect(201)
-      .expect('Content-Type', /application\/json/)
+    const passwordHash = await bcrypt.hash(helper.initialUser.password, 15)
+    const user = new User({
+      _id: helper.initialUser._id,
+      username: helper.initialUser.username,
+      passwordHash,
+      blogs: helper.initialUser.blogs
+    })
+    await user.save()
+
     await Blog.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
 
@@ -83,7 +87,6 @@ describe('when there is initially some blogs saved', () => {
       url: 'https://NoLikesBlog.com/',
       __v: 0
     }
-    console.log('trying to add blog with 0 likes')
     await api
       .post('/api/blogs')
       .send(newBlog)
@@ -92,7 +95,6 @@ describe('when there is initially some blogs saved', () => {
       .expect('Content-Type', /application\/json/)
     const response = await api.get('/api/blogs')
     const addedBlog = response.body.find(blog => blog.title === 'Likes are not required')
-    console.log(addedBlog)
     assert.strictEqual(addedBlog.likes, 0)
   })
 
@@ -182,9 +184,8 @@ describe('when there is initially some blogs saved', () => {
     assert.strictEqual(blogsAtEnd.length, blogsAtStart.length)
     assert(!titles.includes('Test title'))
   })
-  /* deletion fails as the id checking due to initial data is not valid
   describe('deletion of a blog', () => {
-    test('succeeds with status code 204 if id is valid', async () => {
+    test.only('succeeds with status code 204 if id is valid', async () => {
       const result = await api
         .post('/api/login')
         .send(helper.initialUser)
@@ -206,7 +207,7 @@ describe('when there is initially some blogs saved', () => {
       assert(!titles.includes(blogToDelete.title))
     })
   })
-    */
+
 })
 
 describe('One user initially in db', () => {
