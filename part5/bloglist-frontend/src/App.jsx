@@ -109,12 +109,13 @@ const App = () => {
       {user && <div>
         <h2>Blogs</h2>
         <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
-        <Togglable buttonLabel="new blog">
+        <Togglable buttonOpenLabel="Create new blog" buttonCloseLabel="Cancel">
           <BlogForm createBlog={addBlog} />
         </Togglable>
         <br />
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog}/>
+
        )}
       </div>
       }
