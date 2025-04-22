@@ -74,6 +74,17 @@ const App = () => {
       })
   }
 
+  const updateLike = (id, blogObject) => {
+    blogService
+      .update(id, blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+      })
+      .catch(error => {
+        notifyWith('error updating blog', true)
+      })
+  }
+
   const loginForm = () => (
     <div>
     <h2>log in to application</h2>
@@ -114,7 +125,7 @@ const App = () => {
         </Togglable>
         <br />
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog}/>
+          <Blog key={blog.id} blog={blog} updateLike={updateLike} />
 
        )}
       </div>
