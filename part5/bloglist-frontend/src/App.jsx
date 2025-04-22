@@ -74,11 +74,23 @@ const App = () => {
       })
   }
 
-  const updateLike = (id, blogObject) => {
+  const updateLike = (id, blogObject, user) => {
     blogService
       .update(id, blogObject)
       .then(returnedBlog => {
-        setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+        setBlogs(blogs.map(blog => blog.id !== id ? blog : {...returnedBlog, user: user}))
+      })
+      .catch(error => {
+        notifyWith('error updating blog', true)
+      })
+  }
+
+  const deleteBlog = (blogID) => {
+    blogService
+      .remove(blogID)
+      .then(returnedBlog => {
+        setBlogs(blogs.filter(blog => blog.id !== blogID))
+        notifyWith(`blog deleted`, false)
       })
       .catch(error => {
         notifyWith('error updating blog', true)
@@ -113,6 +125,8 @@ const App = () => {
   )
 
 
+
+
   return (
     <div>
       <Notification notification={notification} />
@@ -124,10 +138,11 @@ const App = () => {
           <BlogForm createBlog={addBlog} />
         </Togglable>
         <br />
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} updateLike={updateLike} />
-
-       )}
+        {blogs
+          .sort((a, b) => b.likes - a.likes)
+          .map(blog =>
+            <Blog key={blog.id} blog={blog} updateLike={updateLike} removeBlog={deleteBlog} />
+          )}
       </div>
       }
     </div>
