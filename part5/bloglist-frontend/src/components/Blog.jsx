@@ -38,10 +38,14 @@ const Blog = ({ blog, updateLike, removeBlog }) => {
     <div style = {blogStyle} className='blog'>
       {blog.title} {blog.author} {' '}
       <button onClick={toggleVisibility}>{visible ? 'hide' : 'view'}</button>
-      <div style={{ display: visible ? '' : 'none' }}>
+      <div
+        style={{ display: visible ? '' : 'none' }}
+        data-testid="details">
         <p>{blog.url}</p>
         <p>{blog.likes} {'likes '}
-          <button onClick={addLike}>Like</button>
+          <button
+            data-testid='likeButton'
+            onClick={addLike}>Like</button>
         </p>
         <p>added by {blog.user.name}</p>
         <button onClick={deleteBlog}>delete</button>
