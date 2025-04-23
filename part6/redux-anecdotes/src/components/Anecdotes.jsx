@@ -17,8 +17,14 @@ const Anecdote = ({ anecdote, handleVote }) => {
 }
 
 const Anecdotes = () => {
-  const anecdotes = useSelector(state => state)
+
   const dispatch = useDispatch()
+  const anecdotes = useSelector(({ anecdotes, filter }) => {
+    if (filter === '') {
+      return anecdotes
+    }
+    return anecdotes.filter(anecdote => anecdote.content.toLowerCase().includes(filter.toLowerCase()))
+  })
 
   return (
     <div>
