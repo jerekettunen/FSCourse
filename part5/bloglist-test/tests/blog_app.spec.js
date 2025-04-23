@@ -1,5 +1,7 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
 const { loginWith, addBlog } = require('./helper')
+const { get } = require('http')
+const { addLike } = require('./HELPER.JS')
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
@@ -9,6 +11,13 @@ describe('Blog app', () => {
         username: 'root',
         name: 'root',
         password: 'sekrid'
+      }
+    })
+    await request.post('/api/users', {
+      data: {
+        username: 'VanHell',
+        name: 'Van Helsinki',
+        password: 'drakula'
       }
     })
     await page.goto('/')
@@ -62,12 +71,65 @@ describe('Blog app', () => {
           await addBlog(page, 'One paaaanchhhh', 'Saitama', 'www.onepunchman.com')
         })
         test('it can be liked', async ({ page }) => {
-
           const redBlogElement = await page.getByText('The little red colored pool Not so wRight brothers')
-          await redBlogElement.getByRole('button', { name: 'view' }).click()
-          await redBlogElement.getByTestId('likeButton').click()
+          const otherRedBlogElement = await redBlogElement.locator('..')
+          await otherRedBlogElement.getByRole('button', { name: 'view' }).click()
+          await otherRedBlogElement.getByTestId('likeButton').click()
 
-          await expect(redBlogElement.getByText('1 likes')).toBeVisible()
+          await expect(otherRedBlogElement.getByText('1 likes')).toBeVisible()
+        })
+
+        test('it can be deleted by the user who created it', async ({ page }) => {
+          page.on('dialog', dialog => dialog.accept())
+          const redBlogElement = await page.getByText('The little red colored pool Not so wRight brothers')
+          const otherRedBlogElement = await redBlogElement.locator('..')
+          await otherRedBlogElement.getByRole('button', { name: 'view' }).click()
+          await otherRedBlogElement.getByRole('button', { name: 'delete' }).click()
+          await page.getByText('blog deleted').waitFor()
+
+          await expect(otherRedBlogElement).toHaveCount(0)
+          await expect(page.getByText('One paaaanchhhh Saitama')).toBeVisible()
+          await expect(page.getByText('test title test author')).toHaveCount(1)
+        })
+
+        test('only the creator of the blog can see the delete button', async ({ page }) => {
+          await page.getByText('logout').click()
+          await page.getByText('login to application').waitFor()
+          await loginWith(page, 'VanHell', 'drakula')
+          await page.getByText('Van Helsinki logged in').waitFor()
+          const redBlogElement = await page.getByText('The little red colored pool Not so wRight brothers')
+          const otherRedBlogElement = await redBlogElement.locator('..')
+          await otherRedBlogElement.getByRole('button', { name: 'view' }).click()
+          await expect(otherRedBlogElement.getByRole('button', { name: 'delete' })).toHaveCount(0)
+        })
+
+        test('blogs are ordered by likes', async ({ page }) => {
+          const redBlogElement = await page.getByText('The little red colored pool Not so wRight brothers')
+          const otherRedBlogElement = await redBlogElement.locator('..')
+          const onePunchElement = await page.getByText('One paaaanchhhh Saitama')
+          const otherOnePunchElement = await onePunchElement.locator('..')
+          const testElement = await page.getByText('test title test author')
+          const otherTestElement = await testElement.locator('..')
+
+          await otherRedBlogElement.getByRole('button', { name: 'view' }).click()
+          await addLike(otherRedBlogElement, 1)
+
+          await otherOnePunchElement.getByRole('button', { name: 'view' }).click()
+          await addLike(otherOnePunchElement, 3)
+
+          await otherTestElement.getByRole('button', { name: 'view' }).click()
+          await addLike(otherTestElement, 2)
+
+          const blogs = await page.locator('.blog')
+          const blogTitles = await blogs.getByTitle('blogTitle')
+
+          const titles = await blogTitles.allTextContents()
+
+          await expect(titles).toEqual([
+            'One paaaanchhhh Saitama',
+            'test title test author',
+            'The little red colored pool Not so wRight brothers'
+          ])
         })
       })
     })

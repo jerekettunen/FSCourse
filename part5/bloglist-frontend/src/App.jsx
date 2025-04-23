@@ -68,7 +68,7 @@ const App = () => {
     blogService
       .create(blogObject)
       .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
+        setBlogs(blogs.concat({ ...returnedBlog, user: user }))
         notifyWith(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`, false)
       })
       .catch(error => {
@@ -127,7 +127,7 @@ const App = () => {
         {blogs
           .sort((a, b) => b.likes - a.likes)
           .map(blog =>
-            <Blog key={blog.id} blog={blog} updateLike={updateLike} removeBlog={deleteBlog} />
+            <Blog key={blog.id} blog={blog} updateLike={updateLike} removeBlog={deleteBlog} user={user} />
           )}
       </div>
       }

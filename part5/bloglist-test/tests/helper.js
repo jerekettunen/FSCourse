@@ -13,4 +13,12 @@ const addBlog = async (page, title, author, url) => {
   await page.getByText(`${title} ${author}`).waitFor()
 }
 
-export { loginWith, addBlog }
+const addLike = async (page, likesToAdd) => {
+  for (let i = 0; i < likesToAdd; i++) {
+    await page.getByRole('button', { name: 'like' }).click()
+    await page.getByText(`${i + 1} likes`).waitFor()
+  }
+  
+}
+
+export { loginWith, addBlog, addLike }
