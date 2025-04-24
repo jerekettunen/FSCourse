@@ -8,7 +8,7 @@ const Blog = ({ blog, updateLike, removeBlog, user }) => {
     paddingLeft: 2,
     border: 'solid',
     borderWidth: 1,
-    marginBottom: 5
+    marginBottom: 5,
   }
 
   const toggleVisibility = () => {
@@ -18,13 +18,10 @@ const Blog = ({ blog, updateLike, removeBlog, user }) => {
   const addLike = (event) => {
     event.preventDefault()
     const newLikes = {
-      title: blog.title,
-      url: blog.url,
+      ...blog,
       likes: blog.likes + 1,
-      author: blog.author,
-      user: blog.user.id
     }
-    updateLike(blog.id, newLikes, blog.user)
+    updateLike(newLikes)
   }
 
   const deleteBlog = (event) => {
@@ -34,25 +31,27 @@ const Blog = ({ blog, updateLike, removeBlog, user }) => {
     }
   }
 
-  return(
-    <div style = {blogStyle} className='blog'>
-      <span title='blogTitle'>{blog.title} {blog.author}</span>
+  return (
+    <div style={blogStyle} className="blog">
+      <span title="blogTitle">
+        {blog.title} {blog.author}
+      </span>
       <button onClick={toggleVisibility}>{visible ? 'hide' : 'view'}</button>
-      <div
-        style={{ display: visible ? '' : 'none' }}
-        data-testid="details">
+      <div style={{ display: visible ? '' : 'none' }} data-testid="details">
         <p>{blog.url}</p>
-        <p>{blog.likes} {'likes '}
-          <button
-            data-testid='likeButton'
-            onClick={addLike}>Like</button>
+        <p>
+          {blog.likes} {'likes '}
+          <button data-testid="likeButton" onClick={addLike}>
+            Like
+          </button>
         </p>
         <p>added by {blog.user.name}</p>
-        {(user.name === blog.user.name) && (
+        {user.name === blog.user.name && (
           <button onClick={deleteBlog}>delete</button>
         )}
       </div>
     </div>
-  )}
+  )
+}
 
 export default Blog

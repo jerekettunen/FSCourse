@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useReducer } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
@@ -6,19 +6,17 @@ import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { useSetNotification } from './contexts/NotificationContext'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
+  const [blogs1, setBlogs] = useState([])
   const [password, setPassword] = useState('')
-  const [notification, setNotification] = useState({ message: null })
   const [user, setUser] = useState(null)
 
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
-  }, [])
+  const setNotification = useSetNotification()
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -29,11 +27,56 @@ const App = () => {
     }
   }, [])
 
+  const result = useQuery({
+    queryKey: ['blogs'],
+    queryFn: blogService.getAll,
+    refetchOnWindowFocus: false,
+  })
+
+  const blogs = result.data || []
+
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: (newBlog) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      queryClient.setQueryData(['blogs'], blogs.concat(newBlog))
+      notifyWith(
+        `a new blog ${newBlog.title} by ${newBlog.author} added`,
+        false
+      )
+    },
+    onError: (error) => {
+      notifyWith('error adding blog', true)
+    },
+  })
+
+  const updateBlogMutation = useMutation({
+    mutationFn: blogService.update,
+    onSuccess: (updatedBlog) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      const updatedBlogs = blogs.map((blog) =>
+        blog.id === updatedBlog.id ? updatedBlog : blog
+      )
+      queryClient.setQueryData(['blogs'], updatedBlogs)
+    },
+    onError: (error) => {
+      notifyWith('error updating blog', true)
+    },
+  })
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.remove,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['blogs'])
+      notifyWith('blog deleted', false)
+    },
+    onError: (error) => {
+      notifyWith('error deleting blog', true)
+    },
+  })
+
   const notifyWith = (message, isError) => {
-    setNotification({ message, isError })
-    setTimeout(() => {
-      setNotification({ message: null })
-    }, 5000)
+    setNotification(message, isError, 5)
   }
 
   const handleLogin = async (event) => {
@@ -42,18 +85,16 @@ const App = () => {
 
     try {
       const user = await loginService.login({
-        username, password
+        username,
+        password,
       })
 
-      window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user)
-      )
+      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
-    }
-    catch (exception) {
+    } catch (exception) {
       notifyWith('wrong username or password', true)
     }
   }
@@ -65,72 +106,59 @@ const App = () => {
 
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
-    blogService
-      .create(blogObject)
-      .then(returnedBlog => {
-        setBlogs(blogs.concat({ ...returnedBlog, user: user }))
-        notifyWith(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`, false)
-      })
-      .catch(error => {
-        notifyWith('error adding blog', true)
-      })
+    newBlogMutation.mutate(blogObject)
   }
 
-  const updateLike = (id, blogObject, user) => {
-    blogService
-      .update(id, blogObject)
-      .then(returnedBlog => {
-        setBlogs(blogs.map(blog => blog.id !== id ? blog : { ...returnedBlog, user: user }))
-      })
-      .catch(error => {
-        notifyWith('error updating blog', true)
-      })
+  const updateLike = (id, blogObject) => {
+    updateBlogMutation.mutate(id, blogObject)
   }
 
   const deleteBlog = (blogID) => {
-    blogService
-      .remove(blogID)
-      .then(returnedBlog => {
-        setBlogs(blogs.filter(blog => blog.id !== blogID))
-        notifyWith('blog deleted', false)
-      })
-      .catch(error => {
-        notifyWith('error updating blog', true)
-      })
+    deleteBlogMutation.mutate(blogID)
   }
 
   const blogFormRef = useRef()
 
-
-
-
-
   return (
     <div>
-      <Notification notification={notification} />
-      {!user && <LoginForm
-        handleLogin={handleLogin}
-        username={username}
-        password={password}
-        setUsername={setUsername}
-        setPassword={setPassword}
-      />
-      }
+      <Notification />
+      {!user && (
+        <LoginForm
+          handleLogin={handleLogin}
+          username={username}
+          password={password}
+          setUsername={setUsername}
+          setPassword={setPassword}
+        />
+      )}
 
-      {user && <div>
-        <h2>Blogs</h2>
-        <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
-        <Togglable buttonOpenLabel="Create new blog" buttonCloseLabel="Cancel" ref={blogFormRef}>
-          <BlogForm createBlog={addBlog} />
-        </Togglable>
-        <br />
-        {blogs
-          .sort((a, b) => b.likes - a.likes)
-          .map(blog =>
-            <Blog key={blog.id} blog={blog} updateLike={updateLike} removeBlog={deleteBlog} user={user} />
-          )}
-      </div>
-      }
+      {user && (
+        <div>
+          <h2>Blogs</h2>
+          <p>
+            {user.name} logged in <button onClick={handleLogout}>logout</button>
+          </p>
+          <Togglable
+            buttonOpenLabel="Create new blog"
+            buttonCloseLabel="Cancel"
+            ref={blogFormRef}
+          >
+            <BlogForm createBlog={addBlog} />
+          </Togglable>
+          <br />
+          {blogs
+            .sort((a, b) => b.likes - a.likes)
+            .map((blog) => (
+              <Blog
+                key={blog.id}
+                blog={blog}
+                updateLike={updateLike}
+                removeBlog={deleteBlog}
+                user={user}
+              />
+            ))}
+        </div>
+      )}
     </div>
   )
 }

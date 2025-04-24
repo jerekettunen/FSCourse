@@ -1,13 +1,14 @@
 import { createContext, useReducer, useContext } from 'react'
 
-const initialState = { message: null, isError: false }
-
-const notificationReducer = (state = initialState, action) => {
+const notificationReducer = (state, action) => {
   switch (action.type) {
     case 'SET_NOTIFICATION':
       return action.payload
     case 'CLEAR_NOTIFICATION':
-      return null
+      return {
+        message: null,
+        isError: false,
+      }
     default:
       return state
   }
@@ -15,10 +16,13 @@ const notificationReducer = (state = initialState, action) => {
 
 const NotificationContext = createContext()
 
-export const NotificationContextProvider = (props) => {
-  const [notification, dispatch] = useReducer(notificationReducer, null)
-  const setNotification = (message, timeout) => {
-    dispatch({ type: 'SET_NOTIFICATION', payload: message })
+export const NotificationProvider = (props) => {
+  const [notification, dispatch] = useReducer(notificationReducer, {
+    message: null,
+    isError: false,
+  })
+  const setNotification = (message, isError, timeout) => {
+    dispatch({ type: 'SET_NOTIFICATION', payload: { message, isError } })
     setTimeout(() => {
       dispatch({ type: 'CLEAR_NOTIFICATION' })
     }, timeout * 1000)
@@ -38,7 +42,7 @@ export const useNotification = () => {
       'useNotification must be used within a NotificationProvider'
     )
   }
-  return context
+  return context[0]
 }
 export const useSetNotification = () => {
   const context = useContext(NotificationContext)
