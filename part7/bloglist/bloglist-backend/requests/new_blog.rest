@@ -1,0 +1,12 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Inl1dXVpIiwiaWQiOiI2ODA2Mjc0MjE4NjdiMjQzOTIyZTlkY2QiLCJpYXQiOjE3NDUyNDE0OTh9.isUnjQl2oIBqjQOi-t2CMRFGr_LQTEXJ2b5-8Dw-sT8
+
+{
+  "title": "K-On! review 2",
+  "author": "TheAnimuBoi",
+  "url": "https://AnimuBoiReviews.com/",
+  "likes": 15,
+  "__v": 0
+}
+
