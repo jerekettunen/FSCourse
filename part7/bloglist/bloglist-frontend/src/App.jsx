@@ -9,12 +9,22 @@ import loginService from './services/login'
 import { useSetNotification } from './contexts/NotificationContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
+const userReducer = (state, action) => {
+  switch (action.type) {
+    case 'SET_USER':
+      return action.payload
+    case 'LOGOUT':
+      return null
+    default:
+      return state
+  }
+}
+
 const App = () => {
   const [username, setUsername] = useState('')
-  const [blogs1, setBlogs] = useState([])
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
 
+  const [user, userDispatch] = useReducer(userReducer, null)
   const setNotification = useSetNotification()
   const queryClient = useQueryClient()
 
@@ -22,7 +32,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      userDispatch({ type: 'SET_USER', payload: user })
       blogService.setToken(user.token)
     }
   }, [])
@@ -40,6 +50,7 @@ const App = () => {
     onSuccess: (newBlog) => {
       const blogs = queryClient.getQueryData(['blogs'])
       queryClient.setQueryData(['blogs'], blogs.concat(newBlog))
+      blogFormRef.current.toggleVisibility()
       notifyWith(
         `a new blog ${newBlog.title} by ${newBlog.author} added`,
         false
@@ -91,7 +102,7 @@ const App = () => {
 
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       blogService.setToken(user.token)
-      setUser(user)
+      userDispatch({ type: 'SET_USER', payload: user })
       setUsername('')
       setPassword('')
     } catch (exception) {
@@ -101,11 +112,10 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
-    setUser(null)
+    userDispatch({ type: 'LOGOUT' })
   }
 
   const addBlog = (blogObject) => {
-    blogFormRef.current.toggleVisibility()
     newBlogMutation.mutate(blogObject)
   }
 
