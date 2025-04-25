@@ -42,7 +42,7 @@ export const createNewBlog = (newObject, user) => {
     dispatch(appendBlog(newBlog))
   }
 }
-export const updateLike = (id, newObject) => {
+export const updateBlogInfo = (id, newObject) => {
   return async (dispatch) => {
     const updatedBlog = await blogService.update(id, newObject)
     dispatch(updateBlog({ ...updatedBlog, user: newObject.user }))

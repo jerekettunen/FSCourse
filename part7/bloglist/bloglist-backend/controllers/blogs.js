@@ -19,6 +19,9 @@ blogsRouter.post('/', async (request, response) => {
   if (blog.likes === undefined) {
     blog.likes = 0
   }
+  if (blog.comments === undefined) {
+    blog.comments = []
+  }
 
   const savedBlog = await blog.save()
   user.blogs = user.blogs.concat(savedBlog._id)
@@ -35,6 +38,7 @@ blogsRouter.put('/:id', async (request, response) => {
     likes: body.likes,
     author: body.author,
     user: body.user.id,
+    comments: body.comments,
   }
   const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
     new: true,

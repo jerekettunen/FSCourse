@@ -1,12 +1,13 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Inl1dXVpIiwiaWQiOiI2ODA2Mjc0MjE4NjdiMjQzOTIyZTlkY2QiLCJpYXQiOjE3NDUyNDE0OTh9.isUnjQl2oIBqjQOi-t2CMRFGr_LQTEXJ2b5-8Dw-sT8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Inl1dXVpIiwiaWQiOiI2ODA2Mjc0MjE4NjdiMjQzOTIyZTlkY2QiLCJpYXQiOjE3NDU1NjkwMjR9.hxJxOdJ9aofI3OMpoPyNyeKhE-A7OW6k1SdQtbCMApA
 
 {
-  "title": "K-On! review 2",
-  "author": "TheAnimuBoi",
-  "url": "https://AnimuBoiReviews.com/",
-  "likes": 15,
+  "title": "Commenting on the latest anime",
+  "author": "YuuYuu",
+  "url": "https://www.anime.com",
+  "likes": 12,
+  "comments": ["This is a great post!", "I love this anime!"],
   "__v": 0
 }
 

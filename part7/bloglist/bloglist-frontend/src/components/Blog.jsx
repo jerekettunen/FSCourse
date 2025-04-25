@@ -1,12 +1,14 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { updateLike, removeBlog } from '../reducers/blogReducer'
+import { updateBlogInfo, removeBlog } from '../reducers/blogReducer'
 import { setNotificationWithTimeout } from '../reducers/notificationReducer'
-import { Navigate, useParams } from 'react-router-dom'
 
 const Blog = ({ blog }) => {
+  const [commentInput, setCommentInput] = React.useState('')
+
   const dispatch = useDispatch()
   const user = useSelector((state) => state.user)
+  const comments = blog.comments
 
   const addLike = (event) => {
     event.preventDefault()
@@ -14,7 +16,7 @@ const Blog = ({ blog }) => {
       ...blog,
       likes: blog.likes + 1,
     }
-    dispatch(updateLike(blog.id, newLikes))
+    dispatch(updateBlogInfo(blog.id, newLikes))
     dispatch(
       setNotificationWithTimeout(
         `Blog ${blog.title} by ${blog.author} liked`,
@@ -36,6 +38,16 @@ const Blog = ({ blog }) => {
     }
   }
 
+  const addComment = (event) => {
+    event.preventDefault()
+    if (commentInput) {
+      const newComments = comments.concat(commentInput)
+      const updatedBlog = { ...blog, comments: newComments }
+      dispatch(updateBlogInfo(blog.id, updatedBlog))
+      setCommentInput('')
+    }
+  }
+
   return (
     <div>
       <h2>
@@ -52,6 +64,28 @@ const Blog = ({ blog }) => {
         <p>added by {blog.user.name}</p>
         {user.name === blog.user.name && (
           <button onClick={deleteBlog}>delete</button>
+        )}
+        <h3>Comments</h3>
+        <form onSubmit={addComment}>
+          <input
+            type="text"
+            placeholder="Add a comment"
+            name="comment"
+            data-testid="commentInput"
+            onChange={({ target }) => setCommentInput(target.value)}
+          />
+          <button type="submit" data-testid="commentButton">
+            Add Comment
+          </button>
+        </form>
+        {comments.length === 0 || !comments ? (
+          <p>No comments yet</p>
+        ) : (
+          <ul>
+            {comments.map((comment, index) => (
+              <li key={index}>{comment}</li>
+            ))}
+          </ul>
         )}
       </div>
     </div>

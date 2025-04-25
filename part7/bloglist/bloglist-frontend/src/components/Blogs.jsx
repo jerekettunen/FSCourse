@@ -1,8 +1,4 @@
-import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useDispatch } from 'react-redux'
-import { updateLike, removeBlog } from '../reducers/blogReducer'
-import { setNotificationWithTimeout } from '../reducers/notificationReducer'
 import { Link } from 'react-router-dom'
 
 const Blog = ({ blog, user }) => {
