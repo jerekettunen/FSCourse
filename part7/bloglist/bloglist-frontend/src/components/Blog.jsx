@@ -2,8 +2,18 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateBlogInfo, removeBlog } from '../reducers/blogReducer'
 import { setNotificationWithTimeout } from '../reducers/notificationReducer'
+import styled from 'styled-components'
 
 const Blog = ({ blog }) => {
+  const Button = styled.button`
+    background: lightblue;
+    font-size: 1em;
+    margin: 1em;
+    padding: 0.25em 1em;
+    border: 2px solid lightyellow;
+    border-radius: 3px;
+  `
+
   const [commentInput, setCommentInput] = React.useState('')
 
   const dispatch = useDispatch()
@@ -57,13 +67,13 @@ const Blog = ({ blog }) => {
         <p>{blog.url}</p>
         <p>
           {blog.likes} {'likes '}
-          <button data-testid="likeButton" onClick={addLike}>
+          <Button data-testid="likeButton" onClick={addLike}>
             Like
-          </button>
+          </Button>
         </p>
         <p>added by {blog.user.name}</p>
         {user.name === blog.user.name && (
-          <button onClick={deleteBlog}>delete</button>
+          <Button onClick={deleteBlog}>delete</Button>
         )}
         <h3>Comments</h3>
         <form onSubmit={addComment}>
@@ -74,9 +84,9 @@ const Blog = ({ blog }) => {
             data-testid="commentInput"
             onChange={({ target }) => setCommentInput(target.value)}
           />
-          <button type="submit" data-testid="commentButton">
+          <Button type="submit" data-testid="commentButton">
             Add Comment
-          </button>
+          </Button>
         </form>
         {comments.length === 0 || !comments ? (
           <p>No comments yet</p>

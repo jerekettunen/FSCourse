@@ -8,6 +8,7 @@ const Blog = ({ blog, user }) => {
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5,
+    backgroundColor: 'rgba(98, 17, 92, 0.26)',
   }
 
   return (
@@ -27,6 +28,7 @@ const Blogs = () => {
 
   return (
     <div>
+      <h2>Blogs</h2>
       {blogs
         .sort((a, b) => b.likes - a.likes)
         .map((blog) => (

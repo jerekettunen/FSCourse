@@ -2,7 +2,17 @@ import { initializeAllUsers } from '../reducers/usersReducer'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import User from './User'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+  Link as MuiLink,
+} from '@mui/material'
 
 const Users = () => {
   const dispatch = useDispatch()
@@ -14,25 +24,48 @@ const Users = () => {
   const users = useSelector((state) => state.users)
   return (
     <div>
-      <h2>Users</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Blogs created</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
-              <td>
-                <Link to={`/users/${user.id}`}>{user.name}</Link>
-              </td>
-              <td>{user.blogs.length}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Typography variant="h4" gutterBottom>
+        Users
+      </Typography>
+      <TableContainer component={Paper}>
+        <Table sx={{ borderCollapse: 'separate', borderSpacing: 0 }}>
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ borderBottom: '1px solid rgb(0, 0, 0)' }}>
+                User
+              </TableCell>
+              <TableCell sx={{ borderBottom: '1px solid rgb(9, 9, 9)' }}>
+                Blogs Created
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {users.map((user, index) => (
+              <TableRow
+                key={user.id}
+                sx={{
+                  backgroundColor:
+                    index % 2 === 0 ? 'rgba(0, 0, 0, 0.04)' : 'inherit',
+                  '&:not(:last-child) td': {
+                    borderBottom: '1px solid rgba(224, 224, 224, 1)',
+                  },
+                }}
+              >
+                <TableCell>
+                  <MuiLink
+                    component={Link}
+                    to={`/users/${user.id}`}
+                    underline="hover"
+                  >
+                    {user.name}
+                  </MuiLink>
+                </TableCell>
+                <TableCell>{user.blogs.length}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   )
 }

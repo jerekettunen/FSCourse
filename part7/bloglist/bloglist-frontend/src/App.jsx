@@ -5,10 +5,12 @@ import LoginForm from './components/LoginForm'
 import Home from './components/Home'
 import Users from './components/Users'
 import User from './components/User'
+import NavBar from './components/NavBar'
 import { useSelector, useDispatch } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
 import { initializeUser, logoutUser } from './reducers/userReducer'
 import { Routes, Route, useMatch, Link, Navigate } from 'react-router-dom'
+import styled from 'styled-components'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -23,36 +25,19 @@ const App = () => {
   const blogsMatch = useMatch('/blogs/:id')
   const blog = blogs.find((blog) => blog.id === blogsMatch?.params.id)
 
-  const padding = {
-    padding: 5,
-  }
+  const Page = styled.div`
+    padding: 1em;
+    background: rgba(255, 179, 250, 0.26);
+  `
 
   return (
-    <div>
-      <div>
-        <Link style={padding} to="/">
-          blogs
-        </Link>
-        <Link style={padding} to="/users">
-          users
-        </Link>
-        {user ? (
-          <em>
-            {user.name} logged in
-            <button onClick={() => dispatch(logoutUser())}>logout</button>
-          </em>
-        ) : (
-          <Link style={padding} to="/login">
-            login
-          </Link>
-        )}
-      </div>
+    <Page>
+      <NavBar />
       <Notification />
       {!user && <LoginForm />}
 
       {user && (
         <div>
-          <h2>Blogs</h2>
           <Routes>
             <Route path="/users/:id" element={<User />} />
             <Route
@@ -66,11 +51,14 @@ const App = () => {
               }
             />
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<LoginForm />} />
+            <Route
+              path="/login"
+              element={!user ? <LoginForm /> : <Navigate replace to="/" />}
+            />
           </Routes>
         </div>
       )}
-    </div>
+    </Page>
   )
 }
 
