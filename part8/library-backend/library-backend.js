@@ -116,7 +116,10 @@ const typeDefs = `
     type Query {
     authorCount: Int!
     bookCount: Int!
-    allBooks(author: String, genre: String): [Book!]!
+    allBooks(
+      author: String 
+      genre: String
+    ): [Book!]!
     allAuthors: [Author!]!
   }
   type Mutation {
@@ -124,7 +127,7 @@ const typeDefs = `
       title: String!
       published: Int!
       author: String
-      genres: [String!]!
+      genres: [String!]
     ): Book
     editAuthor(
       name: String!
@@ -138,7 +141,8 @@ const resolvers = {
     authorCount: () => authors.length,
     bookCount: () => books.length,
     allBooks: (root, args) => {
-      if (!args) {
+      console.log('args', args)
+      if (!args.genre && !args.author) {
         console.log('No author or genre provided')
         return books
       }
