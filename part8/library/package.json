@@ -4,7 +4,7 @@
   "description": "graphQL exercises",
   "license": "MIT",
   "author": "Jere Ketttunen",
-  "main": "index.js",
+  "main": "library-backend.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
