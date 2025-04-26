@@ -5,7 +5,8 @@ import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries'
 // eslint-disable-next-line react/prop-types
 const Authors = ({ show }) => {
   const { loading, data } = useQuery(ALL_AUTHORS)
-  const [name, setName] = useState('')
+  const authors = data.allAuthors
+  const [name, setName] = useState(authors[0].name || '')
   const [born, setBorn] = useState('')
 
   const [updateAuthor] = useMutation(EDIT_AUTHOR, {
@@ -23,7 +24,6 @@ const Authors = ({ show }) => {
         setBornTo: parseInt(born),
       },
     })
-    setName('')
     setBorn('')
   }
 
@@ -34,7 +34,6 @@ const Authors = ({ show }) => {
     return <div>loading...</div>
   }
 
-  const authors = data.allAuthors
   if (!authors || authors.length === 0) {
     return <div>no authors found</div>
   }
@@ -62,10 +61,13 @@ const Authors = ({ show }) => {
       <form onSubmit={updateYear}>
         <div>
           name
-          <input
-            value={name}
-            onChange={({ target }) => setName(target.value)}
-          />
+          <select onChange={({ target }) => setName(target.value)}>
+            {authors.map((a) => (
+              <option key={a.name} value={a.name}>
+                {a.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           born
