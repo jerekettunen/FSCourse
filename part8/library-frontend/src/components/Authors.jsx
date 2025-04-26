@@ -5,6 +5,7 @@ import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries'
 // eslint-disable-next-line react/prop-types
 const Authors = ({ show }) => {
   const { loading, data } = useQuery(ALL_AUTHORS)
+  console.log('data', data)
   const authors = data.allAuthors
   const [name, setName] = useState(authors[0].name || '')
   const [born, setBorn] = useState('')
