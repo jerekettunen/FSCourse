@@ -188,11 +188,9 @@ const resolvers = {
     bookCount: async () => Book.collection.countDocuments(),
     allBooks: async (root, args) => {
       if (!args.genre && !args.author) {
-        console.log('No author or genre provided')
         return Book.find({}).populate('author')
       }
       if (args.genre && !args.author) {
-        console.log('Only genre provided')
         return Book.find({ genres: { $in: [args.genre] } }).populate('author')
       }
       if (args.author && !args.genre) {
@@ -214,7 +212,6 @@ const resolvers = {
       }
     },
     allAuthors: async () => {
-      console.log('Fetching all authors')
       const authors = await Author.find({})
       const books = await Book.find({})
       const authorsWithBookCount = authors.map((author) => {
@@ -352,12 +349,10 @@ startStandaloneServer(server, {
   listen: { port: 4000 },
   context: async ({ req, res }) => {
     const auth = req ? req.headers.authorization : null
-    console.log('auth', auth)
 
     if (auth && auth.startsWith('Bearer ')) {
       const decodedToken = jwt.verify(auth.substring(7), process.env.JWT_SECRET)
       const currentUser = await User.findById(decodedToken.id)
-      console.log('currentUser', currentUser)
       return { currentUser }
     }
   },

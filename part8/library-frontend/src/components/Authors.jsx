@@ -5,9 +5,8 @@ import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries'
 // eslint-disable-next-line react/prop-types
 const Authors = ({ show }) => {
   const { loading, data } = useQuery(ALL_AUTHORS)
-  console.log('data', data)
-  const authors = data.allAuthors
-  const [name, setName] = useState(authors[0].name || '')
+
+  const [name, setName] = useState('')
   const [born, setBorn] = useState('')
 
   const [updateAuthor] = useMutation(EDIT_AUTHOR, {
@@ -34,9 +33,9 @@ const Authors = ({ show }) => {
   if (loading) {
     return <div>loading...</div>
   }
-
-  if (!authors || authors.length === 0) {
-    return <div>no authors found</div>
+  const authors = data.allAuthors
+  if (name === '') {
+    setName(authors[0].name)
   }
 
   return (
