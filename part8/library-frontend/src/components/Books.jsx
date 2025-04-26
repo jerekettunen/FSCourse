@@ -1,12 +1,16 @@
 import { useQuery } from '@apollo/client'
-import { ALL_BOOKS } from '../queries'
+import { ALL_BOOKS, GENRES } from '../queries'
 import { useState } from 'react'
 
 // eslint-disable-next-line react/prop-types
 const Books = ({ show }) => {
   const [genre, setGenre] = useState('all genres')
 
-  const { loading, data } = useQuery(ALL_BOOKS)
+  const { data: genresData } = useQuery(GENRES)
+  const { loading, data } = useQuery(ALL_BOOKS, {
+    refetchQueries: [{ query: ALL_BOOKS }],
+    variables: { genre: genre === 'all genres' ? null : genre },
+  })
   if (!show) {
     return null
   }
@@ -15,16 +19,13 @@ const Books = ({ show }) => {
     return <div>loading...</div>
   }
 
+  const genres = genresData.allBooks.map((g) => g.genres)
+  const uniqueGenres = [...new Set(genres.flat())]
+
   const books = data.allBooks
   if (!books || books.length === 0) {
     return <div>no books found</div>
   }
-  const uniqueGenres = [...new Set(books.flatMap((book) => book.genres))]
-
-  const filteredBooks =
-    genre === 'all genres'
-      ? books
-      : books.filter((book) => book.genres.includes(genre))
 
   return (
     <div>
@@ -58,7 +59,7 @@ const Books = ({ show }) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {filteredBooks.map((a) => (
+          {books.map((a) => (
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>

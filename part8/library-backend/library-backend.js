@@ -232,6 +232,7 @@ const resolvers = {
 
   Mutation: {
     addBook: async (root, args, context) => {
+      console.log('addingBook')
       const author = await Author.findOne({ name: args.author })
       const currentUser = context.currentUser
       if (!currentUser) {
@@ -256,7 +257,7 @@ const resolvers = {
           })
         }
       } else {
-        book = new Book({ ...args, author })
+        book = new Book({ ...args, author: author })
       }
       try {
         await book.save()

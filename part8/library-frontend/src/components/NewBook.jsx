@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { ALL_AUTHORS, ALL_BOOKS, ADD_BOOK } from '../queries'
+import { ALL_AUTHORS, ALL_BOOKS, ADD_BOOK, GENRES } from '../queries'
 
 // eslint-disable-next-line react/prop-types
 const NewBook = ({ show }) => {
@@ -11,9 +11,61 @@ const NewBook = ({ show }) => {
   const [genres, setGenres] = useState([])
 
   const [addNewBook] = useMutation(ADD_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
     onError: (error) => {
       console.log('error', error)
+    },
+    update: (cache, response) => {
+      cache.updateQuery(
+        { query: ALL_BOOKS, variables: { genre: null } },
+        ({ allBooks }) => {
+          return {
+            allBooks: allBooks.concat(response.data.addBook),
+          }
+        }
+      )
+      response.data.addBook.genres.forEach((genre) => {
+        if (genre) {
+          cache.updateQuery(
+            { query: ALL_BOOKS, variables: { genre } },
+            ({ allBooks }) => {
+              return {
+                allBooks: allBooks.concat(response.data.addBook),
+              }
+            }
+          )
+        }
+      })
+      cache.updateQuery({ query: GENRES }, ({ allBooks }) => {
+        const genre = {
+          __typename: 'Book',
+          genres: response.data.addBook.genres,
+        }
+        return {
+          allBooks: allBooks.concat(genre),
+        }
+      })
+      cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
+        const authorExists = allAuthors.some(
+          (author) => author.name === response.data.addBook.author.name
+        )
+        if (!authorExists) {
+          return {
+            allAuthors: allAuthors.concat({
+              __typename: 'Author',
+              name: response.data.addBook.author.name,
+              born: null,
+              bookCount: 1,
+            }),
+          }
+        }
+        return {
+          allAuthors: allAuthors.map((author) =>
+            author.name === response.data.addBook.author.name
+              ? { ...author, bookCount: author.bookCount + 1 }
+              : author
+          ),
+        }
+      })
     },
   })
 
