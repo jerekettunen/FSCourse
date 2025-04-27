@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { ALL_AUTHORS, ALL_BOOKS, ADD_BOOK, GENRES } from '../queries'
+import { updateCache } from '../App'
 
 // eslint-disable-next-line react/prop-types
 const NewBook = ({ show }) => {
@@ -15,23 +16,21 @@ const NewBook = ({ show }) => {
       console.log('error', error)
     },
     update: (cache, response) => {
-      cache.updateQuery(
+      updateCache(
+        cache,
         { query: ALL_BOOKS, variables: { genre: null } },
-        ({ allBooks }) => {
-          return {
-            allBooks: allBooks.concat(response.data.addBook),
-          }
-        }
+        response.data.addBook
       )
       response.data.addBook.genres.forEach((genre) => {
-        if (genre) {
-          cache.updateQuery(
+        const cacheData = cache.readQuery({
+          query: ALL_BOOKS,
+          variables: { genre },
+        })
+        if (cacheData) {
+          updateCache(
+            cache,
             { query: ALL_BOOKS, variables: { genre } },
-            ({ allBooks }) => {
-              return {
-                allBooks: allBooks.concat(response.data.addBook),
-              }
-            }
+            response.data.addBook
           )
         }
       })

@@ -5,7 +5,23 @@ import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
 import RecommendedBooks from './components/RecommendedBooks'
 import { useEffect } from 'react'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, useSubscription } from '@apollo/client'
+import { ALL_BOOKS, BOOK_ADDED } from './queries'
+
+export const updateCache = (cache, query, addedBook) => {
+  const uniqueByTitle = (a) => {
+    let seen = new Set()
+    return a.filter((item) => {
+      let k = item.title
+      return seen.has(k) ? false : seen.add(k)
+    })
+  }
+  cache.updateQuery(query, ({ allBooks }) => {
+    return {
+      allBooks: uniqueByTitle(allBooks.concat(addedBook)),
+    }
+  })
+}
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -19,6 +35,32 @@ const App = () => {
       setToken(token)
     }
   }, [])
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data, client }) => {
+      const bookAdded = data.data.bookAdded
+      const message = `A new book ${bookAdded.title} added`
+      window.alert(message)
+      updateCache(
+        client.cache,
+        { query: ALL_BOOKS, variables: { genre: null } },
+        bookAdded
+      )
+      data.data.bookAdded.genres.forEach((genre) => {
+        const cacheData = client.cache.readQuery({
+          query: ALL_BOOKS,
+          variables: { genre },
+        })
+        if (cacheData) {
+          updateCache(
+            client.cache,
+            { query: ALL_BOOKS, variables: { genre } },
+            bookAdded
+          )
+        }
+      })
+    },
+  })
 
   const logout = () => {
     setToken(null)
