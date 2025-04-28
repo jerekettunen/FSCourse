@@ -1,6 +1,9 @@
 import { NewPatient, Gender } from "./types";
 import { z } from "zod";
 
+export const isString = (text: unknown): text is string => {
+  return typeof text === "string" || text instanceof String;
+};
 
 export const NewPatientSchema = z.object({
   name: z.string(),
