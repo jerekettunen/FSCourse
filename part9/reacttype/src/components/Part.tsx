@@ -1,5 +1,11 @@
 import { CoursePart } from "../App";
 
+const assertNever = (value: never): never => {
+  throw new Error(
+    `Unhandled discriminated union member: ${JSON.stringify(value)}`
+  );
+};
+
 const Part = ({course}: {course: CoursePart}) => {
   switch (course.kind) {
     case "basic":
@@ -44,7 +50,7 @@ const Part = ({course}: {course: CoursePart}) => {
       </div>
       );
     default:
-      return null;
+      return assertNever(course);
   }
 }
 
