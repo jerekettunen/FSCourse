@@ -37,6 +37,10 @@ const NewDiaryForm = ({diaries, setDiaries}: NewDiaryFormProps) => {
     } catch (error) {
         if(axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
           setErrorMessage(error.response?.data);
+          setTimeout(() => {
+            setErrorMessage("");
+          }
+          , 5000);
         } else {
           console.log("Unknown error", error);
           setErrorMessage("An unknown error occurred");
