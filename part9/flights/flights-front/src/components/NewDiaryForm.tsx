@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createDiaryEntry } from "../services/diaryService";
 import { DiaryEntry, ValidationError } from "../types";
-import axios, {AxiosError} from "axios";
+import axios from "axios";
 
 interface NewDiaryFormProps {
   diaries: DiaryEntry[];
@@ -23,10 +23,8 @@ const NewDiaryForm = ({diaries, setDiaries}: NewDiaryFormProps) => {
       visibility,
       comment,
     };
-    console.log(diaryEntry);
     try {
       const result = await createDiaryEntry(diaryEntry);
-      console.log(result);
       if (result) {
       const toAddDiaryEntry = {
         id: result.id,
@@ -38,12 +36,14 @@ const NewDiaryForm = ({diaries, setDiaries}: NewDiaryFormProps) => {
       }
     } catch (error) {
         if(axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
-          console.log(error.response?.data);
-          console.log(error.response?.status);
           setErrorMessage(error.response?.data);
         } else {
           console.log("Unknown error", error);
           setErrorMessage("An unknown error occurred");
+          setTimeout(() => {
+            setErrorMessage("");
+          }
+          , 5000);
         }
     }
     
@@ -62,23 +62,40 @@ const NewDiaryForm = ({diaries, setDiaries}: NewDiaryFormProps) => {
       <div>
         date
         <input
+          type='date'
           value={date}
           onChange={({ target }) => setDate(target.value)}
         />
       </div>
       <div>
-        visibility
+        <span style={{ marginRight: "10px" }}>visibility</span>
+        {["great", "good", "ok", "poor"].map((option) => (
+          <label key={option} style={{ marginRight: "10px" }}>
+        {option.charAt(0).toUpperCase() + option.slice(1)}
         <input
-          value={visibility}
+          type="radio"
+          name="visibility"
+          value={option}
+          checked={visibility === option}
           onChange={({ target }) => setVisibility(target.value)}
         />
+          </label>
+        ))}
       </div>
       <div>
-        weather
+        <span style={{ marginRight: "10px" }}>weather</span>
+        {["sunny", "rainy", "cloudy", "stormy", "windy"].map((option) => (
+          <label key={option} style={{ marginRight: "10px" }}>
+        {option.charAt(0).toUpperCase() + option.slice(1)}
         <input
-          value={weather}
+          type="radio"
+          name="weather"
+          value={option}
+          checked={weather === option}
           onChange={({ target }) => setWeather(target.value)}
         />
+          </label>
+        ))}
       </div>
       <div>
         comment
