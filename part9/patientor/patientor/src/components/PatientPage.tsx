@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import patientService from "../services/patients";
-import { Patient } from "../types";
+import { Patient, Diagnosis } from "../types";
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
+import EntryList from "./EntryList/EntryList";
 
 
 
-const PatientPage = () => {
+const PatientPage = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
   const [patient, setPatient] = useState<Patient>();
   
   const id = useParams<{ id: string }>().id;
@@ -31,39 +32,35 @@ const PatientPage = () => {
   if (!patient) {
     return null;
   }
+  console.log(patient);
 
-  switch (patient.gender) {
-    case 'female':
-      return(
-        <div>
-          <h2>{patient.name} <FemaleIcon /></h2>
-          <p>ssn: {patient.ssn}</p>
-          <p>occupation: {patient.occupation}</p>
+  const genderIcon = () => {
+    switch (patient.gender) {
+      case 'female':
+        return <FemaleIcon />;
+      case 'male':
+        return <MaleIcon />;
+      case 'other':
+        return <FlightTakeoffIcon />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div>
+      <h2>{patient.name} {genderIcon()}</h2>
+      <p>ssn: {patient.ssn}</p>
+      <p>occupation: {patient.occupation}</p>
+      <br />
+      <h3>entries</h3>
+      {patient.entries.map(entry => (
+        <div key={entry.id}>
+          <EntryList entry={entry} diagnoses={diagnoses} />
         </div>
-      );
-    case 'male':
-      return(
-        <div>
-          <h2>{patient.name} <MaleIcon /></h2>
-          <p>ssn: {patient.ssn}</p>
-          <p>occupation: {patient.occupation}</p>
-        </div>
-      );
-    case 'other':
-      return(
-        <div>
-          <h2>{patient.name} <FlightTakeoffIcon /></h2>
-          <p>ssn: {patient.ssn}</p>
-          <p>occupation: {patient.occupation}</p>
-        </div>
-      );
-    default:
-      return(
-        <div>
-          <h2>Something is wrong</h2>
-        </div>
-      );
-  }
+      ))}
+    </div>
+  );
   
 };
 export default PatientPage;
