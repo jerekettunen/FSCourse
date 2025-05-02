@@ -1,0 +1,27 @@
+Script started on Fri May  2 21:40:02 2025
+Restored session: Fri May  2 21:37:56 EEST 2025
+[1m[7m%[27m[1m[0m                                                                                ]7;file://Jeres-MacBook-Pro.local/Users/jerekettunen/Documents/CodeSpace/part12-containers-applications/script-answers[0m[27m[24m[J(base) jerekettunen@Jeres-MacBook-Pro script-answers % [K[?2004h[7mdocker run -it ubuntu bas[7mh[27m[K[A[54C[27md[27mo[27mc[27mk[27me[27mr[27m [27mr[27mu[27mn[27m [27m-[27mi[27mt[27m [27mu[27mb[27mu[27mn[27mt[27mu[27m [27mb[27ma[27msh[?2004l
+Unable to find image 'ubuntu:latest' locally
+latest: Pulling from library/ubuntu
+
+[1A[2K49b96e96358d: Pulling fs layer [1B[1A[2K49b96e96358d: Downloading  2.097MB/28.85MB[1B[1A[2K49b96e96358d: Downloading   7.34MB/28.85MB[1B[1A[2K49b96e96358d: Downloading  11.53MB/28.85MB[1B[1A[2K49b96e96358d: Downloading  17.83MB/28.85MB[1B[1A[2K49b96e96358d: Downloading  20.97MB/28.85MB[1B[1A[2K49b96e96358d: Downloading  26.21MB/28.85MB[1B[1A[2K49b96e96358d: Download complete [1B[1A[2K49b96e96358d: Extracting 1 s[1B[1A[2K49b96e96358d: Extracting 1 s[1B[1A[2K49b96e96358d: Extracting 1 s[1B[1A[2K49b96e96358d: Extracting 1 s[1B[1A[2K49b96e96358d: Pull complete [1BDigest: sha256:1e622c5f073b4f6bfad6632f2616c7f59ef256e96fe78bf6a595d1dc4376ac02
+Status: Downloaded newer image for ubuntu:latest
+[?2004h]0;root@12a829dee725: /root@12a829dee725:/# ls
+[?2004l[0m[01;36mbin[0m   [01;34mdev[0m  [01;34mhome[0m  [01;34mmedia[0m  [01;34mopt[0m   [01;34mroot[0m  [01;36msbin[0m  [01;34msys[0m  [01;34musr[0m
+[01;34mboot[0m  [01;34metc[0m  [01;36mlib[0m   [01;34mmnt[0m    [01;34mproc[0m  [01;34mrun[0m   [01;34msrv[0m   [30;42mtmp[0m  [01;34mvar[0m
+[?2004h]0;root@12a829dee725: /root@12a829dee725:/# cd "/usr/st rc"
+[?2004l[?2004h]0;root@12a829dee725: /usr/srcroot@12a829dee725:/usr/src# ls
+[?2004l[?2004h]0;root@12a829dee725: /usr/srcroot@12a829dee725:/usr/src# mkdir app
+[?2004l[?2004h]0;root@12a829dee725: /usr/srcroot@12a829dee725:/usr/src# cd app/
+[?2004l[?2004h]0;root@12a829dee725: /usr/src/approot@12a829dee725:/usr/src/app# touch index.js
+[?2004l[?2004h]0;root@12a829dee725: /usr/src/approot@12a829dee725:/usr/src/app# ls
+[?2004lindex.js
+[?2004h]0;root@12a829dee725: /usr/src/approot@12a829dee725:/usr/src/app# exit
+[?2004lexit
+[1m[7m%[27m[1m[0m                                                                                ]7;file://Jeres-MacBook-Pro.local/Users/jerekettunen/Documents/CodeSpace/part12-containers-applications/script-answers[0m[27m[24m[J(base) jerekettunen@Jeres-MacBook-Pro script-answers % [K[?2004heexit[?2004l
+
+Saving session...
+...saving history...truncating history files...
+...completed.
+
+Script done on Fri May  2 21:41:51 2025
