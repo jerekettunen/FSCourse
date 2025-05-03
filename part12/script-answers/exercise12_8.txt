@@ -1,0 +1,75 @@
+Script started on Sat May  3 11:49:29 2025
+[1m[7m%[27m[1m[0m                                                                                                                                ]7;file://Jeres-MacBook-Pro.local/Users/jerekettunen/Documents/CodeSpace/FSCourse/part12/todo-app/todo-backend[0m[27m[24m[J(base) jerekettunen@Jeres-MacBook-Pro todo-backend % [K[?2004hdocker compose up[17D                 [17Dddocker exec -it todo-backend-mongo-1 bash[?2004l
+[?2004hroot@422c4f164fe7:/# mongosh -u re oot -p example
+[?2004l]0;mongosh mongodb://<credentials>@127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000Current Mongosh Log ID:	6815d8e2233178afc665d0fa
+Connecting to:		[1m[32mmongodb://<credentials>@127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.5.0[0m
+Using MongoDB:		8.0.9
+[1m[33mUsing Mongosh[0m:		2.5.0
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+[1G[0J [1G[?2004h[1m[33m------[0m
+   [1m[33mThe server generated these startup warnings when booting[0m
+   2025-05-03T08:12:57.637+00:00: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine. See http://dochub.mongodb.org/core/prodnotes-filesystem
+   2025-05-03T08:12:58.127+00:00: For customers running the current memory allocator, we suggest changing the contents of the following sysfsFile
+   2025-05-03T08:12:58.127+00:00: We suggest setting the contents of sysfsFile to 0.
+   2025-05-03T08:12:58.127+00:00: vm.max_map_count is too low
+   2025-05-03T08:12:58.128+00:00: We suggest setting swappiness to 0 or 1, as swapping can cause performance problems.
+[1m[33m------[0m
+
+[1G[0Jtest> [7Gshow dbs
+[1madmin[0m         100.00 KiB
+[1mconfig[0m        108.00 KiB
+[1mlocal[0m          72.00 KiB
+[1mthe_database[0m   40.00 KiB
+[1G[0Jtest> [7Guse the_database
+switched to db the_database
+[1G[0Jthe_database> [15Gshiw [1G[0Jthe_database> shiw[19G[1G[0Jthe_database> shi[18G[1G[0Jthe_database> sh[17Gow collections
+[1mtodos[0m
+[1G[0Jthe_database> [15Gdb.todos.find({}=[1G[0Jthe_database> db.todos.find({}[31G)
+[
+  {
+    _id: ObjectId([32m'6815d0089548d9634765d0fb'[39m),
+    text: [32m'Write code'[39m,
+    done: [33mtrue[39m
+  },
+  {
+    _id: ObjectId([32m'6815d0089548d9634765d0fc'[39m),
+    text: [32m'Learn about containers'[39m,
+    done: [33mfalse[39m
+  }
+]
+[1G[0Jthe_database> [15Gdb.todos.insertON[1G[0Jthe_database> db.todos.insertO[31Gne({}[1G[0Jthe_database> db.todos.insertOne({[35Gtext[33mtext[39m:[32m"[39m[32mI[39m[32mn[39m[32mc[39m[32mr[39m[32me[39m[32ma[39m[32ms[39m[32me[39m [32mt[39m[32mh[39m[32me[39m [32mn[39m[32mu[39m[32mm[39m[32mb[39m[32me[39m[32mr[39m [32mo[39m[32mf[39m [32mt[39m[32mo[39m[32mo[39m[32ml[39m[32ms[39m [32mi[39m[32mn[39m [32mm[39m[32my[39m [32mt[39m[32mo[39m[32mo[39m[32ml[39m [32mb[39m[32me[39m[32ml[39m[32mt[39m[32m"[39m, d[36mdo[39mdone:da[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m:[32m"Increase the number of tools in my tool belt"[39m, [33mdone[39m:d[94G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m:[32m"Increase the number of tools in my tool belt"[39m, [33mdone[39m:[93Gfals[33mfalse[39m[1D[1D[1D[1D[1D[1D[1D[1D[1D[1D[1D[1D[1D[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m:[44m[32m"[49mIncrease the number of tools in my tool belt"[39m, [33mdone[39m:[33mfalse[39m[85G[4D[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m:[32m"Increase the number of tools in my tool belt"[39m, [33mdone[39m:[33mfalse[39m[81G[5D[3D[3D[6D[3D[7D[4D[9D[2D[1C[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m:[32m"Increase the number of tools in my tool belt[44m"[39m[49m, [33mdone[39m:[33mfalse[39m[40G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [32m"Increase the number of tools in my tool belt[44m"[39m[49m, [33mdone[39m:[33mfalse[39m[41G[1C[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [32m"Increase the number of tools in my tool belt"[39m, [33mdone[39m:[33mfalse[39m[42G[9C[4C[7C[3C[6C[3C[3C[5C[4C[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tools in my tool belt"[39m, [33mdone[39m:[33mfalse[39m[86G[3C[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [32m"Increase the number of tools in my tool belt"[39m, [33mdone[39m:[33mfalse[39m[89G[4C[1C[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [32m"Increase the number of tools in my tool belt"[39m, [33mdone[39m: [33mfalse[39m[95G[1C[1C[1C[1C[1C)[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [32m"Increase the number of tools in my tool belt"[39m, [33mdone[39m: [33mfalse[39m[100G})
+{
+  acknowledged: [33mtrue[39m,
+  insertedId: ObjectId([32m'6815da2a233178afc665d0fb'[39m)
+}
+[1G[0Jthe_database> [15G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [32m"Increase the number of tools in my tool belt"[39m, [33mdone[39m: [33mfalse[39m})[102G[1G[0Jthe_database> db.todos.find({})[32G
+[
+  {
+    _id: ObjectId([32m'6815d0089548d9634765d0fb'[39m),
+    text: [32m'Write code'[39m,
+    done: [33mtrue[39m
+  },
+  {
+    _id: ObjectId([32m'6815d0089548d9634765d0fc'[39m),
+    text: [32m'Learn about containers'[39m,
+    done: [33mfalse[39m
+  },
+  {
+    _id: ObjectId([32m'6815da2a233178afc665d0fb'[39m),
+    text: [32m'Increase the number of tools in my tool belt'[39m,
+    done: [33mfalse[39m
+  }
+]
+[1G[0Jthe_database> [15Gexit
+[?2004l[?2004hroot@422c4f164fe7:/# exit
+[?2004lexit
+[1m[7m%[27m[1m[0m                                                                                                                                ]7;file://Jeres-MacBook-Pro.local/Users/jerekettunen/Documents/CodeSpace/FSCourse/part12/todo-app/todo-backend[0m[27m[24m[J(base) jerekettunen@Jeres-MacBook-Pro todo-backend % [K[?2004heeie exit[?2004l
+
+Saving session...
+...copying shared history...
+...saving history...truncating history files...
+...completed.
+
+Script done on Sat May  3 11:57:18 2025
