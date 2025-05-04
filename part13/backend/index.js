@@ -20,6 +20,7 @@ app.use('/api/login', loginRouter)
 app.use('/api/authors', authorsRouter)
 
 const start = async () => {
+  console.log('Connecting to database...')
   await connectToDatabase()
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)

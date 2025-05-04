@@ -8,31 +8,39 @@ Blog.init({
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   author: {
     type: DataTypes.TEXT,
-    allowNull: true
+    allowNull: true,
   },
   url: {
     type: DataTypes.TEXT,
-    allowNull: false
+    allowNull: false,
   },
   title: {
     type: DataTypes.TEXT,
-    allowNull: false
+    allowNull: false,
   },
   likes: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: 0
+    defaultValue: 0,
+  },
+  year: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    validate: {
+      min: 1991,
+      max: new Date().getFullYear(),
+    },
   },
 }, {
   sequelize,
-  underscored: true,
-  timestamps: false,
-  modelName: 'blog'
-})
+  underscored: true, 
+  timestamps: true, 
+  modelName: 'blog',
+});
 
 module.exports = Blog
 // const { sequelize } = require('../util/db')

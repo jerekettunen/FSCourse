@@ -8,7 +8,7 @@ User.init({
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   username: {
     type: DataTypes.STRING,
@@ -16,21 +16,21 @@ User.init({
     allowNull: false,
     validate: {
       isEmail: true,
-    }
+    },
   },
   name: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
 }, {
   sequelize,
-  underscored: true,
-  timestamps: true,
-  modelName: 'user'
-})
+  underscored: true, // Use snake_case for column names
+  timestamps: true, // Automatically adds createdAt and updatedAt
+  modelName: 'user',
+});
 
 module.exports = User
