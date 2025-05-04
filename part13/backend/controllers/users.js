@@ -3,14 +3,17 @@ const bcrypt = require('bcrypt')
 
 const { User } = require('../models')
 const { Blog } = require('../models')
+const { Op } = require('sequelize')
 
 
 router.get('/', async (req, res) => {
   const users = await User.findAll({
-    include: {
+    include: [{
       model: Blog,
       attributes: { exclude: ['userId'] }
-    }
+    },
+    ],
+    attributes: { exclude: ['password'] },
   })
   res.json(users)
 })
@@ -35,7 +38,23 @@ router.post('/', async (req, res) => {
 })
 
 router.get('/:id', async (req, res) => {
-  const user = await User.findByPk(req.params.id)
+  let readCondition = {}; // Default: no filtering
+  if (req.query.read !== undefined) {
+    readCondition = { read: req.query.read }; // Filter by 'read' if provided
+  }
+  const user = await User.findByPk(req.params.id, {
+    include: [{
+      model: Blog,
+      as: 'reading_list',
+      through: {
+        attributes: ['id', 'read'],
+        where: readCondition,
+      },
+      attributes: { exclude: ['userId'] }
+    },
+    ],
+    attributes: { exclude: ['password'] },
+  })
   if (user) {
     res.json(user)
   } else {
