@@ -26,6 +26,10 @@ User.init({
     type: DataTypes.STRING,
     allowNull: false,
   },
+  active: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 }, {
   sequelize,
   underscored: true, // Use snake_case for column names

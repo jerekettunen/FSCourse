@@ -2,8 +2,8 @@ const jwt = require('jsonwebtoken')
 const router = require('express').Router()
 const bcrypt = require('bcrypt')
 
-const { SECRET } = require('../util/config')
-const User = require('../models/user')
+const {User, Session} = require('../models')
+
 
 
 
@@ -20,12 +20,15 @@ router.post('/', async (request, response) => {
       ? false
       : await bcrypt.compare(body.password, user.password)
 
-  console.log('user', user)
-  console.log('passwordCorrect', passwordCorrect)
 
   if (!(user && passwordCorrect)) {
     return response.status(401).json({
       error: 'invalid username or password'
+    })
+  }
+  if (user.active) {
+    return response.status(401).json({
+      error: 'user already logged in'
     })
   }
 
@@ -33,11 +36,11 @@ router.post('/', async (request, response) => {
     username: user.username,
     id: user.id,
   }
-  console.log('userForToken', userForToken)
 
   const token = jwt.sign(userForToken, process.env.SECRET)
-  console.log('token', token)
-
+  await Session.create({ token: token, userId: user.id })
+  user.active = true
+  await user.save()
   response
     .status(200)
     .send({ token, username: user.username, name: user.name })
